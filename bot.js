@@ -42,7 +42,21 @@ url=[
     'https://www.imdb.com/search/title?genres=western&sort=user_rating,desc&title_type=feature&num_votes=25000,&pf_rd_m=A2FGELUUNOQJNL&pf_rd_p=5aab685f-35eb-40f3-95f7-c53f09d542c3&pf_rd_r=VF27Z85NSN2GCAEAAFC7&pf_rd_s=right-6&pf_rd_t=15506&pf_rd_i=top&ref_=chttp_gnr_21',
     'https://www.imdb.com/chart/top/?ref_=nv_mv_250'
 ]
-
+const frasesNota= [
+    "Ai você tá trolando com essa nota",
+    "Nota mais zoada que esse seu chifre torto",
+    "No brasil tá chuvendo mulher mano, para de trolar com nota zoada que tu arranja uma!",
+    "Que a sua nota na vida seja zoada que nem essa ai, cornola",
+    "Facistas não passarão, nem corno que não sabe dar nota",
+    "Que nota massa em, agora para de trolar, vadia pulta",
+    "Nota 0 pra sua zoeirinha"
+]
+const frasesSort=[
+    "Categoria meio troll em fiote",
+    "Para de zoar meu concorvado, coloca coisa certa ae kk",
+    "Amigo, dá uma moderada ai com esses seus comandos",
+    "Se tentar foder o sistema o sistema vai te fuder"
+]
 client.login(discordBotKey);
 
 client.once('ready',()=>{
@@ -85,7 +99,12 @@ async function mensagemR(msg){
                 msg.channel.send("Informações burras detectadas no comando!!");
                 return;
             }
-            opi = parseInt(opi,10);
+            opi = parseInt(opi,10)||undefined;
+            if(opi==undefined){
+                const rdNum=Math.floor(Math.random() * frasesSort.length);
+                await msg.channel.send(frasesSort[rdNum])
+                return;
+            }
             console.log(opi);
             let recFilme;
             recFilme=await getMovie(opi-1);
@@ -94,10 +113,10 @@ async function mensagemR(msg){
                 .setColor(0x00AE86)
                 .setImage(recFilme.imgurl)
                 .addFields({ name: '\u200b', value: '\u200b' })
-                .addFields({name:"Nota do IMDB:", value:recFilme.rating})
-                .addFields({name:"Nota MetaScore", value:recFilme.metarating})
+                .addFields({name:"Nota do IMDB:", value:recFilme.rating||"sem notas"})
+                .addFields({name:"Nota MetaScore", value:recFilme.metarating||"sem notas"})
             last=recFilme;
-            await msg.channel.send(embed)
+            await msg.channel.send(embed);
             
         }
         else if (msg.content=="bn"){ //boa noite
@@ -159,12 +178,18 @@ async function mensagemR(msg){
             const data=new Date();
             watching.title=last.title;
             watching.data=data.getDate()+"/"+data.getMonth()+1+"/"+data.getFullYear();
+            watching.notas=[];
             last=undefined;
             await msg.channel.send("Assistindo: "+watching.title);
             
 
         }else if(msg.content.startsWith('nt')){ //dar nota
             let nota = msg.content.substr(3);
+            const jaja=watching.notas.find(e=>e.id==msg.author.id);
+            if(jaja!=undefined){
+                await msg.reply("Tu já votou rapá")
+                return;
+            }
             if(!nota.length){
                 await msg.channel.send("Informações burras detectadas no comando!!");
                 return;
@@ -173,17 +198,13 @@ async function mensagemR(msg){
                 await msg.channel.send("Nenhum filme está sendo assistido!");
                 return;
             }
-            nota=parseInt(nota, 10);
-            if(nota>10 || nota<0){
-                await msg.channel.send("Ai você tá trolando com essa nota")
+            nota=parseFloat(nota,10)||undefined;
+            if(nota>10 || nota<0.001 || nota==undefined){
+                const rdNum=Math.floor(Math.random() * frasesNota.length);
+                await msg.channel.send(frasesNota[rdNum]) 
                 return;
             }
 
-            const jaja=watching.notas.find(e=>e.id==msg.author.id);
-            if(jaja!=undefined){
-                await msg.reply("Tu já votou rapá")
-                return;
-            }
             watching.notas.push({nome:msg.author.username,nota:nota, id:msg.author.id});
             await msg.reply("Nota enviada!")
         }else if(msg.content=="ver"){
