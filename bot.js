@@ -122,7 +122,7 @@ async function mensagemR(msg){
         else if (msg.content=="bn"){ //boa noite
             await msg.reply("Boa noite filho")
         }else if (msg.content=="ff"){ //boa noite
-            await msg.reply("'F' for respecr, pela net do murilão")
+            await msg.reply("'F' for respect, pela net do murilão")
         }
         else if(msg.content=="op"){ //opções
             const embed = new Discord.MessageEmbed()
