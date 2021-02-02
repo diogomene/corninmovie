@@ -278,8 +278,54 @@ async function mensagemR(msg){
         await ler();
         setTimeout(async()=>{await msg.channel.send(embed)},1500)
 
+    }else if (msg.content.startsWith("anm")){ //anime
+        let opi = msg.content.substr(3);
+        opi=opi.trim();
+        if(!opi.length){
+            msg.channel.send("Informações burras detectadas no comando!!");
+            return;
+        }
+        await search(opi)
+            function search(animName){
+                const searchTerm=animName
+                getAnime(searchTerm).then(show)
+            }
+            
+            async function getAnime(searchTerm){
+                return fetch(`${apiURL}/search/${searchTerm}`).then(
+                    res=>res.json())
+            }
+            
+            async function show(results){
+                const embed= new Discord.MessageEmbed()
+                .setTitle("Animes")
+                .setColor(0xFF00E1)
+                results.forEach(movie=> {
+                    resultList.innerHTML+=`
+                        <div class="anime">
+            
+                            <div class="title-anime">
+                                <a href="movie.html?url=`+movie.url+`">
+                                    <p>`+movie.title+`</p>
+                                </a>
+                             </div>
+                             <div class="info-anime">
+                                <div class="img-anime">
+                                    <a href="movie.html?url=`+movie.url+`">
+                                        <img src="`+movie.poster+`">
+                                    </a>
+                                </div>
+                             </div>
+            
+                        </div>
+            
+                    `
+                    embed.addFields({name:movie.title,value:e.url});
+                });
+                await msg.channel.send(embed)    
+            }
+
     }
         }
 
     }
-
